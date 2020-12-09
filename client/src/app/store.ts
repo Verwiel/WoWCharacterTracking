@@ -1,11 +1,14 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
+import authorizationReducer from '../features/authorization/authorizationSlice'
+import battlenetReducer from '../features/battlenet/battlenetSlice'
+
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    authorization: authorizationReducer,
+    battlenet: battlenetReducer,
   },
-});
+})
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<
@@ -13,4 +16,4 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   RootState,
   unknown,
   Action<string>
->;
+>
