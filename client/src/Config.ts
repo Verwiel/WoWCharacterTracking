@@ -5,7 +5,9 @@ dotenv.config({ path: __dirname + '/.env' })
 
 // Region can be set as us, eu, or apac
 let region = 'us'
-const authEndpoint = `https://${region}.battle.net/oauth/authorize`
+export const authBaseURL = `https://${region}.battle.net/oauth`
+
+const authEndpoint = `${authBaseURL}/authorize`
 // const authEndpoint = `https://${region}.battle.net/oauth/token`
 
 export const getAuthorizeHref = (): string => {

@@ -3,6 +3,7 @@ import { AppThunk, RootState } from '../../app/store'
 import {
   setLoggedIn
 } from '../authorization/authorizationSlice'
+import { authBaseURL } from '../../Config'
 
 interface SpotifyExampleState {
   displayName: string,
@@ -34,7 +35,7 @@ export const selectDisplayName = (state: RootState) => state.battlenet.displayNa
 export const setUserProfileAsync = (accessToken: string): AppThunk => dispatch => {
   const myHeaders = new Headers()
   myHeaders.append('Authorization', 'Bearer ' + accessToken)
-  fetch('https://api.spotify.com/v1/me', {
+  fetch(`${authBaseURL}/userinfo`, {
     method: 'GET',
     headers: myHeaders,
   }).then(response => response.json())

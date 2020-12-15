@@ -4,6 +4,7 @@ import {
   setLoggedIn,
   setAccessToken,
   selectIsLoggedIn,
+  checkAccessTokenAsync
 } from './authorizationSlice'
 import { setUserProfileAsync } from '../battlenet/battlenetSlice'
 import { getAuthorizeHref } from '../../Config'
@@ -21,6 +22,7 @@ export function Authorization() {
     if (access_token) {
       dispatch(setLoggedIn(true))
       dispatch(setAccessToken(access_token))
+      dispatch(checkAccessTokenAsync(access_token))
       dispatch(setUserProfileAsync(access_token))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
