@@ -1,15 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AppThunk, RootState } from '../../app/store'
-import { authBaseURL } from '../../Config'
+import axios from 'axios'
 
 interface AuthorizationState {
   loggedIn: boolean;
   accessToken: string;
+  displayName: string;
 }
 
 const initialState: AuthorizationState = {
   loggedIn: false,
   accessToken: '',
+  displayName: ''
 }
 
 export const authorizationSlice = createSlice({
@@ -19,44 +21,38 @@ export const authorizationSlice = createSlice({
     setLoggedIn: (state, action: PayloadAction<boolean>) => {
       state.loggedIn = action.payload;
     },
-    setAccessToken: (state, action: PayloadAction<string>) => {
+    setAuthCode: (state, action: PayloadAction<string>) => {
       state.accessToken = action.payload;
     },
+    setDisplayName: (state, action: PayloadAction<string>) => {
+      state.displayName = action.payload;
+    }
   },
 })
 
-export const { setLoggedIn, setAccessToken } = authorizationSlice.actions
+export const { setLoggedIn, setAuthCode, setDisplayName } = authorizationSlice.actions
 
 export const selectIsLoggedIn = (state: RootState) => state.authorization.loggedIn
 export const selectAccessToken = (state: RootState) => state.authorization.accessToken
-
-export const checkAccessTokenAsync = (accessToken: string): AppThunk => dispatch => {
-  // const myHeaders = new Headers()
-  // myHeaders.append('Authorization', 'Bearer ' + accessToken)
-//   const body = {
-//     <developer client id>:<developer secret>
-// redirect_uri=<redirect URI used in authorize request>
-// -d scope=<space separated scopes>
-// -d grant_type=authorization_code
-// -d code=<authorization code>
-//   }
+export const selectDisplayName = (state: RootState) => state.authorization.displayName
 
 
-  fetch(`${authBaseURL}/token`, {
-    method: 'POST',
-    // headers: myHeaders,
-  }).then(response => response.json())
-    .then((data) => {
-      console.log(data)
-      // dispatch(setAccessToken(data.display_name ? data.display_name : data.id))
-    }).catch((error) => {
-      console.log(error)
-      if (error instanceof XMLHttpRequest) {
-        if (error.status === 401) {
+export const setBattlenetUser = (accessToken: string): AppThunk => dispatch => {
+  const fetch = async () => {
+    try {
+      const res = await axios.get(`http://localhost:5000/blizzard/auth/${accessToken}`)
+      dispatch(setDisplayName(res.data.battletag ? res.data.battletag : res.data.id))
+    } catch(err) {
+      console.log(err)
+      if (err instanceof XMLHttpRequest) {
+        if (err.status === 401) {
           dispatch(setLoggedIn(false))
         }
       }
-    })
+    }
+  }
+  
+  fetch()
 }
 
 export default authorizationSlice.reducer

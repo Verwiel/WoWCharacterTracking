@@ -21,7 +21,7 @@ export const checkJwt = jwt({
 })
 
 // The Client Credentials grant is used when applications request an access token to access their own resources, not on behalf of a user.
-export const getBlizzardToken = async () => {
+export const getClientCredToken = async () => {
   try {
     const res = await axios({
       method: 'post',
@@ -42,8 +42,38 @@ export const getBlizzardToken = async () => {
         password: `${process.env.BLIZZARD_CLIENT_SECRET}`
       }
     })
-    console.log(res.data)
+    return res.data
   } catch(err) {
     console.log(err)
+  }
+}
+
+// Use auth code to generate a token for the user
+export const authToAccessToken = async (authCode: string) => {
+  try {
+    const res = await axios({
+      method: 'post',
+      url: 'https://us.battle.net/oauth/token',
+      data: qs.stringify({
+        'grant_type': 'authorization_code',
+        'redirect_uri': `${process.env.BLIZZARD_REDIRECT_URI}`,
+        'code': authCode
+      }),
+      headers: { 
+        'Accept': 'application/json', 
+        'Accept-Language': 'en_US',
+        'Access-Control-Allow-Origin': '*', 
+        'Cache-Control': 'no-store',
+        'Content-Type':'application/x-www-form-urlencoded',
+        'Pragma': 'no-cache HTTP'
+      },
+      auth: {
+        username: `${process.env.BLIZZARD_CLIENT_ID}`,
+        password: `${process.env.BLIZZARD_CLIENT_SECRET}`
+      }
+    })
+    return (res.data.access_token)
+  } catch(err) {
+    console.log(`Failed to create token: ${err.response.data.error}`)
   }
 }
