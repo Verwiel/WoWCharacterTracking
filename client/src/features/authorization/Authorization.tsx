@@ -6,8 +6,8 @@ import {
   selectIsLoggedIn,
   selectDisplayName,
   setBattlenetUser,
+  getAuthorizeHref,
 } from './authorizationSlice'
-import { getAuthorizeHref } from '../../Config'
 import { getSearchParams, removeSearchParamsFromUrl } from '../../utils/hashUtils'
 
 const hashParams = getSearchParams()
@@ -31,14 +31,18 @@ export function Authorization() {
   return (
     <div>
       <div>
-        {!isLoggedIn &&
+        {!isLoggedIn ?
           <button
-          aria-label="Log in using OAuth 2.0"
-          onClick={() => window.open(getAuthorizeHref(), '_self')}
+            aria-label="Log in using OAuth 2.0"
+            onClick={async () => window.open(await getAuthorizeHref(), '_self')}
           >
-          Log in with Battle.net
-          </button>}
-        {isLoggedIn && <div>{displayName} Logged in!</div>}
+            Log in with Battle.net
+          </button>
+          : 
+          <div>
+            Logged in as {displayName}
+          </div>
+        }
       </div>
     </div>
   )

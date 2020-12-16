@@ -36,6 +36,15 @@ export const selectIsLoggedIn = (state: RootState) => state.authorization.logged
 export const selectAccessToken = (state: RootState) => state.authorization.accessToken
 export const selectDisplayName = (state: RootState) => state.authorization.displayName
 
+export const getAuthorizeHref = async () => {
+  try {
+    const res = await axios.get('http://localhost:5000/blizzard/authorize')
+    return res.data as string
+  } 
+  catch(err) {
+    console.log(err)
+  }
+}
 
 export const setBattlenetUser = (accessToken: string): AppThunk => dispatch => {
   const fetch = async () => {
